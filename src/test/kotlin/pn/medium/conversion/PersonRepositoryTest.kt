@@ -1,43 +1,32 @@
-package pn.medium.conversion;
+package pn.medium.conversion
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
+import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withData
+import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.shouldBe
 
-import java.util.List;
+class PersonRepositoryTest : FunSpec({
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+    data class Data(val input: String, val found: Boolean)
 
-class PersonRepositoryTest {
+    val personRepository = PersonRepository()
 
-     PersonRepository personRepository = new PersonRepository();
+    test("Find all") {
+        val actual = personRepository.findAll()
 
-    public static List<Data> data() {
-        return List.of(new Data("1",true),new Data("2",false));
+        val expected = listOf(Person("1", "Fred", null, "Jones"))
+        actual shouldBe expected
     }
 
-    @Test
-    void findAll() {
-        var actual = personRepository.findAll();
-
-        var person = new Person();
-        person.setId("1");
-        person.setFirstName("Fred");
-        person.setSecondName("Jones");
-        var expected =  List.of(person);
-        Assertions.assertIterableEquals(actual, expected);
+    test("Find Daves") {
+        val actual = personRepository.findDaves()
+        actual.shouldHaveSize(2)
     }
 
-    @Test
-    void findDaves() {
-        var actual = personRepository.findDaves();
-        assertEquals(actual.size(),2);
-    }
-
-    @ParameterizedTest
-    @MethodSource("data")
-    void findById(Data data) {
-        assertEquals( personRepository.findPersonById(data.getInput()).isPresent(),data.getFound());
+    context("Test finding by ID") {
+        withData(Data("1", true), Data("2", false)) {
+            (personRepository.findPersonById(it.input) != null) shouldBe it.found
+        }
     }
 }
+)

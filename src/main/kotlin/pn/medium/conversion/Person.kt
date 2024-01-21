@@ -1,12 +1,7 @@
-package pn.medium.conversion;
-
-import lombok.Data;
-@Data
-public class Person {
-
-    private String id;
-    private String firstName;
-    private String secondName;
-    private String lastName;
-
-}
+package pn.medium.conversion
+data class Person (
+    val id: String?,
+    val firstName: String,
+    val secondName: String?,
+    val lastName: String
+)
